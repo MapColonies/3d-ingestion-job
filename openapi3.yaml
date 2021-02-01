@@ -1,65 +1,122 @@
 openapi: 3.0.1
 info:
-  title: service-name
-  description: basic template for map colonies service
-  version: 1.0.0
+  title: 3d-ingestion
+  description: Service to load 3d data
+  version: 0.0.1
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
   - url: http://localhost:8080
 paths:
-  /resourceName:
-    get:
-      operationId: getResourceName
-      tags:
-        - resourceName
-      summary: gets the resource
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/resource'
+  /requests:
     post:
-      operationId: createResource
+      summary: Add a new ingestion request
       tags:
-        - resourceName
-      summary: creates a new record of type resource
+        - requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/request'
       responses:
         201:
           description: created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resource'
+                $ref: '#/components/schemas/request'
         400:
-          description: Bad Request
+          $ref: '#/components/responses/badRequest'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
+    get:
+      summary: Get all ingestion requests
+      tags:
+        - requests
+      responses:
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: '#/components/schemas/requests'
+        204:
+          description: OK
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
+  /requests/{id}:
+    get:
+      summary: Get a specific ingestion request by id
+      tags:
+        - requests
+      parameters:
+        - $ref: '#/components/parameters/requestId'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/request'
+        404:
+          $ref: '#/components/responses/notFound'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
+
 components:
+  parameters:
+    requestId:
+      in: path
+      name: requestId
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 68
+      description: The request id
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    badRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    notFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    unexpectedError:
+      description: Unexpected Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
   schemas:
     error:
       type: object
-      required:
-        - message
       properties:
         message:
           type: string
-    resource:
+    request:
       type: object
       required:
-        - id
-        - name
-        - description
+        - path
+        - metadata
       properties:
-        id:
-          type: number
-          format: int64
-        name:
+        requestId:
           type: string
-        description:
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          minLength: 1
+          maxLength: 68
+        path:
           type: string
+        metadata:
+          type: string
+    requests:
+      type: array
+      items:
+        $ref: '#/components/schemas/request'
