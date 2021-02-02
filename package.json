@@ -1,6 +1,6 @@
 {
   "name": "3d-ingestion",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A restful API for saving and querying 3d ingestion requests",
   "main": "./src/index.ts",
   "scripts": {
