@@ -1,7 +1,7 @@
 import { Entity as OrmEntity, PrimaryColumn, Column } from 'typeorm';
 
 export interface IRequest {
-  requestId?: string;
+  requestId: string;
   path: string;
   metadata: string;
 }

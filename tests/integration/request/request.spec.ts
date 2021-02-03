@@ -30,7 +30,7 @@ describe('request', function () {
         const request = await createDbRequest();
 
         const response = await requestSender.getAll(app);
-
+        console.log(response.body);
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
         expect(response.body).toHaveLength(1);
@@ -58,9 +58,8 @@ describe('request', function () {
     describe('Happy Path 🙂', function () {
       it('should return 200 status code and the request', async function () {
         const request = await createDbRequest();
-        const requestId = request.requestId != undefined ? request.requestId : '';
 
-        const response = await requestSender.getRequest(app, requestId);
+        const response = await requestSender.getRequest(app, request.requestId);
 
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
@@ -130,12 +129,11 @@ describe('request', function () {
         const request = createFakeRequest();
         const findMock = jest.fn().mockResolvedValue(request);
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock });
-        const requestId = request.requestId != undefined ? request.requestId : '';
 
         const response = await requestSender.createRequest(mockedApp, request);
 
         expect(response.status).toBe(httpStatusCodes.UNPROCESSABLE_ENTITY);
-        expect(response.body).toHaveProperty('message', `requestId=${requestId} already exists`);
+        expect(response.body).toHaveProperty('message', `requestId=${request.requestId} already exists`);
       });
 
       it('should return 500 status code if a db exception happens', async function () {
