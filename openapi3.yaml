@@ -45,7 +45,7 @@ paths:
           description: OK
         '5XX':
           $ref: '#/components/responses/unexpectedError'
-  /requests/{id}:
+  /requests/{requestId}:
     get:
       summary: Get a specific ingestion request by id
       tags:
@@ -72,8 +72,7 @@ components:
       required: true
       schema:
         type: string
-        minLength: 1
-        maxLength: 68
+        format: uuid
       description: The request id
       example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
@@ -109,9 +108,8 @@ components:
       properties:
         requestId:
           type: string
+          format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          minLength: 1
-          maxLength: 68
         path:
           type: string
         metadata:

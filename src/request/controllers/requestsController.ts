@@ -4,24 +4,24 @@ import { injectable, inject } from 'tsyringe';
 import { Services } from '../../common/constants';
 import { ILogger } from '../../common/interfaces';
 import { RequestsManager } from '../models/requestsManager';
-import { Request } from '../models/request';
-import { HttpError } from '../../common/errors';
-import { AlreadyExistsError } from '../models/errors';
+import { IRequest } from '../models/request';
+import { HttpError, NotFoundError } from '../../common/errors';
+import { IdAlreadyExistsError } from '../models/errors';
 
 interface RequestParams {
   requestId: string;
 }
 
-type GetAllRequestsHandler = RequestHandler<undefined, Request[]>;
-type GetRequestHandler = RequestHandler<RequestParams, Request>;
-type CreateRequestHandler = RequestHandler<Request, Request>;
+type GetAllRequestsHandler = RequestHandler<undefined, IRequest[]>;
+type GetRequestHandler = RequestHandler<RequestParams, IRequest>;
+type CreateRequestHandler = RequestHandler<IRequest, IRequest>;
 
 @injectable()
 export class RequestsController {
   public constructor(@inject(RequestsManager) private readonly manager: RequestsManager, @inject(Services.LOGGER) private readonly logger: ILogger) {}
 
   public getAll: GetAllRequestsHandler = async (req, res, next) => {
-    let requests: Request[] | undefined;
+    let requests: IRequest[] | undefined;
     try {
       requests = await this.manager.getAll();
     } catch (error) {
@@ -35,25 +35,25 @@ export class RequestsController {
 
   public get: GetRequestHandler = async (req, res, next) => {
     const { requestId } = req.params;
-
-    let request: Request | undefined;
+    let request: IRequest | undefined;
     try {
       request = await this.manager.getRequest(requestId);
     } catch (error) {
       return next(error);
     }
     if (!request) {
-      return res.sendStatus(httpStatus.NOT_FOUND);
+      const error = new NotFoundError('Request with given id was not found.');
+      return next(error);
     }
     return res.status(httpStatus.OK).json(request);
   };
 
   public post: CreateRequestHandler = async (req, res, next) => {
-    let request: Request | undefined;
+    let request: IRequest | undefined;
     try {
       request = await this.manager.createRequest(req.body);
     } catch (error) {
-      if (error instanceof AlreadyExistsError) {
+      if (error instanceof IdAlreadyExistsError) {
         (error as HttpError).status = httpStatus.UNPROCESSABLE_ENTITY;
       }
       return next(error);
