@@ -30,7 +30,7 @@ describe('request', function () {
         const request = await createDbRequest();
 
         const response = await requestSender.getAll(app);
-        console.log(response.body);
+
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
         expect(response.body).toHaveLength(1);
