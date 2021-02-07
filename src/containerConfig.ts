@@ -36,7 +36,7 @@ async function registerExternalValues(): Promise<void> {
   const connectionOptions = config.get<ConnectionOptions>('db');
   const connection = await createConnection({ entities: ['request/models/*.js'], ...connectionOptions });
   container.register(Connection, { useValue: connection });
-  container.register('RequestsRepository', { useValue: connection.getRepository(Request) });
+  container.register(Services.REPOSITORY, { useValue: connection.getRepository(Request) });
 
   container.register<Probe>(Probe, {
     useFactory: (container) =>

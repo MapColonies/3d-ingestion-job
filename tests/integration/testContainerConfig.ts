@@ -13,7 +13,7 @@ async function registerTestValues(): Promise<void> {
   await connection.synchronize();
   const repo = connection.getRepository(Request);
   container.register(Connection, { useValue: connection });
-  container.register('RequestsRepository', { useValue: repo });
+  container.register(Services.REPOSITORY, { useValue: repo });
 }
 
 export { registerTestValues };

@@ -9,7 +9,7 @@ import { IdAlreadyExistsError } from './errors';
 @injectable()
 export class RequestsManager {
   public constructor(
-    @inject('RequestsRepository') private readonly repository: Repository<Request>,
+    @inject(Services.REPOSITORY) private readonly repository: Repository<Request>,
     @inject(Services.LOGGER) private readonly logger: ILogger
   ) {}
 

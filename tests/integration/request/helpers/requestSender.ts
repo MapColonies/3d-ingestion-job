@@ -3,6 +3,7 @@ import { Application } from 'express';
 
 import { container } from 'tsyringe';
 import { ServerBuilder } from '../../../../src/serverBuilder';
+import { Services } from '../../../../src/common/constants';
 
 export function getApp(): Application {
   const builder = container.resolve<ServerBuilder>(ServerBuilder);
@@ -10,7 +11,7 @@ export function getApp(): Application {
 }
 
 export function getMockedRepoApp(repo: unknown): Application {
-  container.register('RequestsRepository', { useValue: repo });
+  container.register(Services.REPOSITORY, { useValue: repo });
   const builder = container.resolve<ServerBuilder>(ServerBuilder);
   return builder.build();
 }
