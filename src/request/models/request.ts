@@ -8,7 +8,7 @@ export interface IRequest {
 
 @OrmEntity({ name: 'requests' })
 export class Request implements IRequest {
-  @PrimaryColumn({ name: 'request_id', length: 68 })
+  @PrimaryColumn({ type: 'uuid', name: 'request_id' })
   public requestId!: string;
 
   @Column({ type: 'text', name: 'path' })
