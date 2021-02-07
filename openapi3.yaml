@@ -19,7 +19,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/request'
+              $ref: '#/components/schemas/payload'
       responses:
         201:
           description: created
@@ -102,6 +102,16 @@ components:
       type: object
       properties:
         message:
+          type: string
+    payload:
+      type: object
+      required:
+        - path
+        - metadata
+      properties:
+        path:
+          type: string
+        metadata:
           type: string
     request:
       type: object
