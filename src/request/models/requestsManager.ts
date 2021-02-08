@@ -15,9 +15,13 @@ export class RequestsManager {
 
   public async createRequest(newRequest: IRequest): Promise<IRequest> {
     this.logger.log('info', `Creating a new request ${JSON.stringify(newRequest)}`);
-    newRequest.requestId = uuid();
-    const dbRequest = await this.repository.findOne({ where: [{ requestId: newRequest.requestId }] });
-    if (dbRequest) {
+    let dbRequest: Request | undefined;
+    let retries = 3;
+    do {
+      newRequest.requestId = uuid();
+      dbRequest = await this.repository.findOne({ where: [{ requestId: newRequest.requestId }] });
+    } while (dbRequest != undefined && --retries > 0);
+    if (dbRequest != undefined) {
       throw new IdAlreadyExistsError(`requestId=${dbRequest.requestId} already exists`);
     }
     await this.repository.insert(newRequest);

@@ -19,6 +19,7 @@ describe('RequestsManager', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
+
     it('resolves without errors if id is not in use', async () => {
       findOne.mockResolvedValue(undefined);
       insert.mockResolvedValue(undefined);
@@ -58,6 +59,7 @@ describe('RequestsManager', () => {
     afterEach(() => {
       find.mockClear();
     });
+
     it('returns a requests list', async () => {
       const request = createFakeRequest();
       find.mockResolvedValue([request]);
@@ -93,6 +95,7 @@ describe('RequestsManager', () => {
     afterEach(() => {
       findOne.mockClear();
     });
+
     it('returns the request', async () => {
       const request = createFakeRequest();
       findOne.mockResolvedValue(request);
