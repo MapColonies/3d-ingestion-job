@@ -6,12 +6,12 @@ import { container, inject, injectable } from 'tsyringe';
 import { RequestLogger } from './common/middlewares/RequestLogger';
 import { Services } from './common/constants';
 import { IConfig, ILogger } from './common/interfaces';
-import { resourceNameRouterFactory } from './resourceName/routes/resourceNameRouter';
+import { requestRouterFactory } from './request/routes/requestRouter';
 import { openapiRouterFactory } from './common/routes/openapi';
 
 @injectable()
 export class ServerBuilder {
-  private readonly serverInstance = express();
+  private readonly serverInstance: express.Application;
 
   public constructor(
     @inject(Services.CONFIG) private readonly config: IConfig,
@@ -30,7 +30,7 @@ export class ServerBuilder {
   }
 
   private buildRoutes(): void {
-    this.serverInstance.use('/resourceName', resourceNameRouterFactory(container));
+    this.serverInstance.use('/requests', requestRouterFactory(container));
     this.serverInstance.use('/', openapiRouterFactory(container));
   }
 
