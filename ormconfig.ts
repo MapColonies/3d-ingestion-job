@@ -5,8 +5,8 @@ const connectionOptions = config.get<ConnectionOptions>('db');
 
 module.exports = {
   ...connectionOptions,
-  entities: ['src/request/models/*.ts'],
-  migrationsTableName: 'requests_migration_table',
+  entities: ['src/job/models/*.ts'],
+  migrationsTableName: 'jobs_migration_table',
   migrations: ['db/migration/*.ts'],
   cli: {
     migrationsDir: 'db/migration',

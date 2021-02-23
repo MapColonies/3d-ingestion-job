@@ -4,7 +4,7 @@ import { Probe } from '@map-colonies/mc-probe';
 import config from 'config';
 import { container } from 'tsyringe';
 import { Connection, ConnectionOptions, createConnection } from 'typeorm';
-import { Request } from './request/models/request';
+import { Job } from './job/models/job';
 import { Services } from './common/constants';
 import { promiseTimeout } from './common/utils/promiseTimeout';
 
@@ -34,9 +34,9 @@ async function registerExternalValues(): Promise<void> {
   container.register(Services.LOGGER, { useValue: logger });
 
   const connectionOptions = config.get<ConnectionOptions>('db');
-  const connection = await createConnection({ entities: ['request/models/*.js'], ...connectionOptions });
+  const connection = await createConnection({ entities: ['job/models/*.js'], ...connectionOptions });
   container.register(Connection, { useValue: connection });
-  container.register(Services.REPOSITORY, { useValue: connection.getRepository(Request) });
+  container.register(Services.REPOSITORY, { useValue: connection.getRepository(Job) });
 
   container.register<Probe>(Probe, {
     useFactory: (container) =>
