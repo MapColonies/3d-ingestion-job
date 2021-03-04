@@ -19,7 +19,7 @@ type UpdateRequestHandler = RequestHandler<JobParams, IJob, IJob>;
 
 @injectable()
 export class JobsController {
-  public constructor(@inject(JobsManager) private readonly manager: JobsManager, @inject(Services.LOGGER) private readonly logger: ILogger) {}
+  public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, private readonly manager: JobsManager) {}
 
   public getAll: GetAllRequestHandler = async (req, res, next) => {
     try {
