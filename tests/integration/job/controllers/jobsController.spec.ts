@@ -1,14 +1,15 @@
-/*import httpStatusCodes from 'http-status-codes';
+import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
 import { Application } from 'express';
 import { QueryFailedError } from 'typeorm';
-import { registerTestValues } from '../testContainerConfig';
-import { createFakeJob, createPath, createMetadata, createUuid, createRandom } from '../../helpers/helpers';
+import { registerTestValues } from '../../testContainerConfig';
+import { createFakeJob, createPath, createMetadata, createUuid, createRandom } from '../../../helpers/helpers';
 import * as requestSender from './helpers/requestSender';
 import { createDbJob } from './helpers/db';
 
 describe('JobsController', function () {
   let app: Application;
+
   beforeAll(async function () {
     await registerTestValues();
     app = requestSender.getApp();
@@ -204,4 +205,3 @@ describe('JobsController', function () {
     });
   });
 });
-*/

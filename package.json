@@ -4,8 +4,8 @@
   "description": "A restful API for saving and querying 3d ingestion jobs",
   "main": "./src/index.ts",
   "scripts": {
-    "test:unit": "jest --config=./tests/configurations/unit/jest.config.js",
-    "test:integration": "jest --config=./tests/configurations/integration/jest.config.js",
+    "test:unit": "jest --config=./tests/configurations/unit/jest.config.ts",
+    "test:integration": "jest --config=./tests/configurations/integration/jest.config.ts",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "prelint:fix": "npm run format:fix",
