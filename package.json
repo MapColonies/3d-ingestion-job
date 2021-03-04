@@ -1,7 +1,7 @@
 {
   "name": "3d-ingestion",
   "version": "0.0.1",
-  "description": "A restful API for saving and querying 3d ingestion requests",
+  "description": "A restful API for saving and querying 3d ingestion jobs",
   "main": "./src/index.ts",
   "scripts": {
     "test:unit": "jest --config=./tests/configurations/unit/jest.config.js",

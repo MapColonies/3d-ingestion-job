@@ -1,82 +1,106 @@
 openapi: 3.0.1
 info:
   title: 3d-ingestion
-  description: Service to load 3d data
+  description: Service to create 3d ingestion job
   version: 0.0.1
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
 paths:
-  /requests:
+  /jobs:
     post:
-      operationId: createRequest
-      summary: Add a new ingestion request
+      operationId: createJob
+      summary: Add a new ingestion job
       tags:
-        - requests
+        - jobs
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/payload'
+              $ref: '#/components/schemas/createPayload'
       responses:
         201:
-          description: created
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/request'
+                $ref: '#/components/schemas/job'
         400:
           $ref: '#/components/responses/badRequest'
         '5XX':
           $ref: '#/components/responses/unexpectedError'
     get:
       operationId: getAll
-      summary: Get all ingestion requests
+      summary: Get all ingestion jobs
       tags:
-        - requests
+        - jobs
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/requests'
+                $ref: '#/components/schemas/jobs'
         204:
           description: OK
         '5XX':
           $ref: '#/components/responses/unexpectedError'
-  /requests/{requestId}:
+  /jobs/{jobId}:
     get:
-      operationId: getRequest
-      summary: Get a specific ingestion request by id
+      operationId: getJob
+      summary: Get a specific ingestion job by id
       tags:
-        - requests
+        - jobs
       parameters:
-        - $ref: '#/components/parameters/requestId'
+        - $ref: '#/components/parameters/jobId'
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/request'
+                $ref: '#/components/schemas/job'
         404:
           $ref: '#/components/responses/notFound'
         '5XX':
           $ref: '#/components/responses/unexpectedError'
-
+    patch:
+      operationId: updateJob
+      summary: Update ingestion job status
+      tags:
+        - jobs
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updatePayload'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        400:
+          $ref: '#/components/responses/badRequest'
+        404:
+          $ref: '#/components/responses/notFound'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
 components:
   parameters:
-    requestId:
+    jobId:
       in: path
-      name: requestId
+      name: jobId
       required: true
       schema:
         type: string
         format: uuid
-      description: The request id
+      description: The job id
       example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
     badRequest:
@@ -103,7 +127,7 @@ components:
       properties:
         message:
           type: string
-    payload:
+    createPayload:
       type: object
       required:
         - path
@@ -112,22 +136,148 @@ components:
         path:
           type: string
         metadata:
+          $ref: '#/components/schemas/metadata'
+    updatePayload:
+      type: object
+      required:
+        - status
+      properties:
+        status:
           type: string
-    request:
+    job:
       type: object
       required:
         - path
         - metadata
       properties:
-        requestId:
+        jobId:
           type: string
           format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
         path:
           type: string
         metadata:
+          $ref: '#/components/schemas/metadata'
+        status:
           type: string
-    requests:
+          enum:
+            - Pending
+            - In-Progress
+            - Completed
+            - Failed
+          default: Pending
+        created:
+          type: string
+          format: date
+        updated:
+          type: string
+          format: date
+    jobs:
       type: array
       items:
-        $ref: '#/components/schemas/request'
+        $ref: '#/components/schemas/job'
+    metadata:
+      type: object
+      description: 3d tiles metadata
+      required:
+        - productId
+        - productName
+        - geographicArea
+        - productVersion
+        - productType
+        - extentLowerLeft
+        - extentUpperRight
+        - SourceDateStart
+        - SourceDateEnd
+        - producerName
+        - SRS
+        - accuracyLE90
+        - horizontalAccuracyCE90
+        - relativeAccuracyLE90
+        - sensor
+        - productionSystem
+      properties:
+        productId:
+          type: string
+          description: Product's unique identifier
+        productName:
+          type: string
+          description: Product name
+        geographicArea:
+          type: string
+          description: Emergence geographic area name
+        productVersion:
+          type: number
+          description: Product version
+          default: 1
+        productType:
+          type: string
+          description: Product type
+          enum:
+            - 3DModel
+          default: 3DModel
+        description:
+          type: string
+          description: Product description
+        classification:
+          type: string
+          description: Product classification
+        footprint:
+          type: string
+          description: Geographical delineation of the product
+        extentLowerLeft:
+          type: string
+          description: Bottom left point of a blocking rectangle
+        extentUpperRight:
+          type: string
+          description: Top right point of a blocking rectangle
+        SourceDateStart:
+          type: string
+          description: Date of oldest source material
+          format: date-time
+        SourceDateEnd:
+          type: string
+          description: Date of latest source material
+          format: date-time
+        producerName:
+          type: string
+          description: The organization that produced/supplied the product
+          enum:
+            - IDFMU
+          default: IDFMU
+        SRS:
+          type: string
+          description: The product reference system, including a vertical data
+        SRSOrigin:
+          type: string
+          description: Axis system center in which the coordinate is displayed
+        nominalResolution:
+          type: string
+          description: Number of points per unit of area
+        accuracyLE90:
+          type: string
+          description: LE90 of the height values
+        horizontalAccuracyCE90:
+          type: string
+          description: CE90 of location of elevation points
+        relativeAccuracyLE90:
+          type: string
+          description: LE90 of distance measurement
+        heightRangeFrom:
+          type: number
+          description: The minimum height
+        heightRangeTo:
+          type: number
+          description: The maximum height
+        sensor:
+          type: array
+          items:
+            type: string
+          description: The sensor used as the source of the product (possibly more than one)
+        productionMethod:
+          type: string
+          description: Method of extracting altitude data
+          default: Photogrammetric
+        productionSystem:
+          type: string
+          description: Production system
