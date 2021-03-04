@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: 3d-ingestion
+  title: 3d ingestion job
   description: Service to create 3d ingestion job
   version: 0.0.1
   license:
