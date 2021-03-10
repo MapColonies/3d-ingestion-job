@@ -61,7 +61,7 @@ export const createMetadata = (): Metadata => {
 };
 
 export const createFakeJob = (): IJob => {
-  return { jobId: createUuid(), path: createPath(), metadata: createMetadata(), status: 'In-Progress', created: new Date(), updated: new Date() };
+  return { jobId: createUuid(), path: createPath(), metadata: createMetadata(), status: 'Pending', created: new Date(), updated: new Date() };
 };
 
 export const createFakeIntegrationJob = (): IntegrationJob => {
@@ -69,7 +69,7 @@ export const createFakeIntegrationJob = (): IntegrationJob => {
     jobId: createUuid(),
     path: createPath(),
     metadata: createMetadata(),
-    status: 'In-Progress',
+    status: 'Pending',
     created: new Date(),
     updated: new Date(),
   };

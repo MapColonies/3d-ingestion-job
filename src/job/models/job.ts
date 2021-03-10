@@ -22,7 +22,7 @@ export class Job implements IJob {
   @Column({ type: 'simple-json' })
   public metadata!: Metadata;
 
-  @Column({ type: 'enum', enum: Status, default: Status.PROGRESS })
+  @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   public status!: Status | string;
 
   @Column({ default: new Date() })
