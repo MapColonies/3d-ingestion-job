@@ -11,8 +11,7 @@ export function getApp(): Application {
 
 export function getMockedRepoApp(repo: unknown): Application {
   container.register(Services.REPOSITORY, { useValue: repo });
-  const builder = container.resolve<ServerBuilder>(ServerBuilder);
-  return builder.build();
+  return getApp();
 }
 
 export async function getAll(app: Application): Promise<supertest.Response> {

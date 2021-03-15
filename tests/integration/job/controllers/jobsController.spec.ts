@@ -1,18 +1,22 @@
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
 import { Application } from 'express';
-import { QueryFailedError } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { registerTestValues } from '../../testContainerConfig';
-import { createFakeJob, createPath, createMetadata, createUuid, createRandom } from '../../../helpers/helpers';
+import { createFakeJob, createPath, createMetadata, createUuid, createRandom, convertTimestampToISOString } from '../../../helpers/helpers';
 import * as requestSender from './helpers/requestSender';
-import { createDbJob } from './helpers/db';
+import { createDbJob, getRepositoryFromContainer } from './helpers/db';
+import { Job } from '../../../../src/job/models/job';
 
 describe('JobsController', function () {
   let app: Application;
+  let repository: Repository<Job>;
 
   beforeAll(async function () {
     await registerTestValues();
     app = requestSender.getApp();
+    repository = getRepositoryFromContainer(Job);
+    await repository.clear();
   });
 
   afterAll(function () {
@@ -35,7 +39,7 @@ describe('JobsController', function () {
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
         expect(response.body).toHaveLength(1);
-        expect(response.body).toMatchObject([job]);
+        expect(response.body).toMatchObject([convertTimestampToISOString(job)]);
       });
     });
 
@@ -47,6 +51,7 @@ describe('JobsController', function () {
       it('should return 500 status code if a db exception happens', async function () {
         const findMock = jest.fn().mockRejectedValue(new QueryFailedError('select *', [], new Error('failed')));
         const mockedApp = requestSender.getMockedRepoApp({ find: findMock });
+
         const response = await requestSender.getAll(mockedApp);
 
         expect(response.status).toBe(httpStatusCodes.INTERNAL_SERVER_ERROR);
@@ -64,7 +69,7 @@ describe('JobsController', function () {
 
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
-        expect(response.body).toMatchObject(job);
+        expect(response.body).toMatchObject(convertTimestampToISOString(job));
       });
     });
 
@@ -126,7 +131,7 @@ describe('JobsController', function () {
     });
 
     describe('Sad Path 😥', function () {
-      it('should return 422 status code if a job with the same id exists', async function () {
+      it('should return 422 status code if a job with the same id already exists', async function () {
         const job = createFakeJob();
         const findMock = jest.fn().mockResolvedValue(job);
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock });
@@ -163,14 +168,14 @@ describe('JobsController', function () {
 
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
-        expect(response.body).toMatchObject(job);
+        expect(response.body).toMatchObject(convertTimestampToISOString(job));
       });
     });
 
     describe('Bad Path 😡', function () {
       it('should return 400 status code and error message if status field is missing', async function () {
         const job = createFakeJob();
-        job.status = '';
+        delete job.status;
         const response = await requestSender.updateJob(app, job.jobId, job);
 
         expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);

@@ -27,10 +27,6 @@ export const createPath = (): string => {
   return '/usr/share/nginx/downloads';
 };
 
-export const createDate = (): Date => {
-  return faker.date.past();
-};
-
 export const createMetadata = (): Metadata => {
   return {
     productId: 'string',
@@ -43,8 +39,8 @@ export const createMetadata = (): Metadata => {
     footprint: 'string',
     extentLowerLeft: 'string',
     extentUpperRight: 'string',
-    SourceDateStart: createDate(),
-    SourceDateEnd: createDate(),
+    SourceDateStart: new Date(),
+    SourceDateEnd: new Date(),
     producerName: 'IDFMU',
     SRS: 'string',
     SRSOrigin: 'string',
@@ -64,19 +60,7 @@ export const createFakeJob = (): IJob => {
   return { jobId: createUuid(), path: createPath(), metadata: createMetadata(), status: 'Pending', created: new Date(), updated: new Date() };
 };
 
-export const createFakeIntegrationJob = (): IntegrationJob => {
-  const job = {
-    jobId: createUuid(),
-    path: createPath(),
-    metadata: createMetadata(),
-    status: 'Pending',
-    created: new Date(),
-    updated: new Date(),
-  };
-  return convertToISOTimestamp(job);
-};
-
-export const convertToISOTimestamp = (job: IJob): IntegrationJob => {
+export const convertTimestampToISOString = (job: IJob): IntegrationJob => {
   const { metadata, created, updated, ...others } = job;
   const { SourceDateStart, SourceDateEnd, ...rest } = metadata;
   const integrationMetadata = { ...rest, SourceDateStart: SourceDateStart.toISOString(), SourceDateEnd: SourceDateEnd.toISOString() };
