@@ -29,7 +29,7 @@ export const createPath = (): string => {
 
 export const createMetadata = (): Metadata => {
   return {
-    productId: 'string',
+    productId: createUuid(),
     productName: 'string',
     geographicArea: 'string',
     productVersion: 1,
