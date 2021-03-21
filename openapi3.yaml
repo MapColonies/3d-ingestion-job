@@ -132,10 +132,10 @@ components:
     createPayload:
       type: object
       required:
-        - path
+        - modelPath
         - metadata
       properties:
-        path:
+        modelPath:
           type: string
         metadata:
           $ref: '#/components/schemas/metadata'
@@ -149,14 +149,14 @@ components:
     job:
       type: object
       required:
-        - path
+        - modelPath
         - metadata
       properties:
         jobId:
           type: string
           format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-        path:
+        modelPath:
           type: string
         metadata:
           $ref: '#/components/schemas/metadata'

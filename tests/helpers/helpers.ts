@@ -23,8 +23,8 @@ export const createUuid = (): string => {
   return faker.random.uuid();
 };
 
-export const createPath = (): string => {
-  return '/usr/share/nginx/downloads';
+export const createModelPath = (): string => {
+  return '/tmp/tilesets/TilesetWithDiscreteLOD';
 };
 
 export const createMetadata = (): Metadata => {
@@ -57,7 +57,7 @@ export const createMetadata = (): Metadata => {
 };
 
 export const createFakeJob = (): IJob => {
-  return { jobId: createUuid(), path: createPath(), metadata: createMetadata(), status: 'Pending', created: new Date(), updated: new Date() };
+  return { jobId: createUuid(), modelPath: createModelPath(), metadata: createMetadata(), status: 'Pending', created: new Date(), updated: new Date() };
 };
 
 export const convertTimestampToISOString = (job: IJob): IntegrationJob => {

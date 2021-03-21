@@ -4,7 +4,7 @@ import { Metadata } from './metadata';
 
 export interface IJob {
   jobId: string;
-  path: string;
+  modelPath: string;
   metadata: Metadata;
   status: Status | string;
   created: Date;
@@ -16,8 +16,8 @@ export class Job implements IJob {
   @PrimaryColumn({ type: 'uuid', name: 'job_id' })
   public jobId!: string;
 
-  @Column({ type: 'text' })
-  public path!: string;
+  @Column({ type: 'text', name: 'model_path' })
+  public modelPath!: string;
 
   @Column({ type: 'simple-json' })
   public metadata!: Metadata;
