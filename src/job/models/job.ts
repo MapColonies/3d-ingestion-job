@@ -1,11 +1,10 @@
 import { Entity as OrmEntity, PrimaryColumn, Column } from 'typeorm';
 import { Status } from '../../common/constants';
-import { Metadata } from './metadata';
 
 export interface IJob {
   jobId: string;
   modelPath: string;
-  metadata: Metadata;
+  metadata: object;
   status: Status | string;
   created: Date;
   updated: Date;
@@ -20,7 +19,7 @@ export class Job implements IJob {
   public modelPath!: string;
 
   @Column({ type: 'simple-json' })
-  public metadata!: Metadata;
+  public metadata!: object;
 
   @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   public status!: Status | string;

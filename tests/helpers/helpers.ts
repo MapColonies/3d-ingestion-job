@@ -1,15 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import faker from 'faker';
-import { Metadata } from '../../src/job/models/metadata';
 import { IJob } from '../../src/job/models/job';
 
-interface IntegrationMetadata extends Omit<Metadata, 'SourceDateStart' | 'SourceDateEnd'> {
-  SourceDateStart: string;
-  SourceDateEnd: string;
-}
-
-interface IntegrationJob extends Omit<IJob, 'created' | 'updated' | 'metadata'> {
-  metadata: IntegrationMetadata;
+interface IntegrationJob extends Omit<IJob, 'created' | 'updated'> {
   created: string;
   updated: string;
 }
@@ -27,32 +20,12 @@ export const createModelPath = (): string => {
   return '/tmp/tilesets/TilesetWithDiscreteLOD';
 };
 
-export const createMetadata = (): Metadata => {
+export const createMetadata = (): object => {
   return {
-    productId: createUuid(),
-    productName: 'string',
-    geographicArea: 'string',
-    productVersion: 1,
-    productType: '3DModel',
-    description: 'string',
-    classification: 'string',
-    footprint: 'string',
-    extentLowerLeft: 'string',
-    extentUpperRight: 'string',
-    SourceDateStart: new Date(),
-    SourceDateEnd: new Date(),
-    producerName: 'IDFMU',
-    SRS: 'string',
-    SRSOrigin: 'string',
-    nominalResolution: 'string',
-    accuracyLE90: 'string',
-    horizontalAccuracyCE90: 'string',
-    relativeAccuracyLE90: 'string',
-    heightRangeFrom: 0,
-    heightRangeTo: 0,
-    sensor: ['string'],
-    productionMethod: 'Photogrammetric',
-    productionSystem: 'string',
+    id: createUuid(),
+    name: faker.random.word(),
+    version: 1,
+    description: faker.random.word()
   };
 };
 
@@ -61,8 +34,6 @@ export const createFakeJob = (): IJob => {
 };
 
 export const convertTimestampToISOString = (job: IJob): IntegrationJob => {
-  const { metadata, created, updated, ...others } = job;
-  const { SourceDateStart, SourceDateEnd, ...rest } = metadata;
-  const integrationMetadata = { ...rest, SourceDateStart: SourceDateStart.toISOString(), SourceDateEnd: SourceDateEnd.toISOString() };
-  return { ...others, metadata: integrationMetadata, created: created.toISOString(), updated: updated.toISOString() };
+  const { created, updated, ...others } = job;
+  return { ...others, created: created.toISOString(), updated: updated.toISOString() };
 };
