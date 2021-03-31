@@ -4,7 +4,7 @@ import { Status } from '../../common/constants';
 export interface IJob {
   jobId: string;
   modelPath: string;
-  metadata: object;
+  metadata: Record<string, never>;
   status: Status | string;
   created: Date;
   updated: Date;
@@ -19,7 +19,7 @@ export class Job implements IJob {
   public modelPath!: string;
 
   @Column({ type: 'simple-json' })
-  public metadata!: object;
+  public metadata!: Record<string, never>;
 
   @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   public status!: Status | string;

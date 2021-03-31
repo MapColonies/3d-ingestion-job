@@ -20,12 +20,12 @@ export const createModelPath = (): string => {
   return '/tmp/tilesets/TilesetWithDiscreteLOD';
 };
 
-export const createMetadata = (): object => {
+export const createMetadata = (): Record<string, never> => {
   return {
-    id: createUuid(),
-    name: faker.random.word(),
-    version: 1,
-    description: faker.random.word()
+    id: createUuid() as never,
+    name: faker.random.word() as never,
+    version: 1 as never,
+    description: faker.random.word() as never
   };
 };
 
