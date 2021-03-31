@@ -18,7 +18,7 @@ export class Job implements IJob {
   @Column({ type: 'text', name: 'model_path' })
   public modelPath!: string;
 
-  @Column({ type: 'simple-json' })
+  @Column({ type: 'json' })
   public metadata!: Record<string, never>;
 
   @Column({ type: 'enum', enum: Status, default: Status.PENDING })
