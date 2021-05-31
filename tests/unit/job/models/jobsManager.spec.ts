@@ -26,7 +26,7 @@ describe('JobsManager', () => {
 
       const createPromise = jobsManager.createJob(job);
 
-      await expect(createPromise).resolves.not.toThrow();
+      await expect(createPromise).resolves.toStrictEqual(job);
     });
 
     it('rejects on DB error', async () => {

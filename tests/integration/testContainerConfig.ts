@@ -11,9 +11,9 @@ async function registerTestValues(): Promise<void> {
   const connectionOptions = config.get<ConnectionOptions>('db');
   const connection = await createConnection({ entities: ['src/job/models/*.ts'], ...connectionOptions });
   await connection.synchronize();
-  const repo = connection.getRepository(Job);
+  const repository = connection.getRepository(Job);
   container.register(Connection, { useValue: connection });
-  container.register(Services.REPOSITORY, { useValue: repo });
+  container.register(Services.REPOSITORY, { useValue: repository });
 }
 
 export { registerTestValues };

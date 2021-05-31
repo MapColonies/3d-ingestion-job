@@ -1,11 +1,10 @@
 import { Entity as OrmEntity, PrimaryColumn, Column } from 'typeorm';
 import { Status } from '../../common/constants';
-import { Metadata } from './metadata';
 
 export interface IJob {
   jobId: string;
-  path: string;
-  metadata: Metadata;
+  modelPath: string;
+  metadata: Record<string, never>;
   status: Status | string;
   created: Date;
   updated: Date;
@@ -16,13 +15,13 @@ export class Job implements IJob {
   @PrimaryColumn({ type: 'uuid', name: 'job_id' })
   public jobId!: string;
 
-  @Column({ type: 'text' })
-  public path!: string;
+  @Column({ type: 'text', name: 'model_path' })
+  public modelPath!: string;
 
-  @Column({ type: 'simple-json' })
-  public metadata!: Metadata;
+  @Column({ type: 'json' })
+  public metadata!: Record<string, never>;
 
-  @Column({ type: 'enum', enum: Status, default: Status.PROGRESS })
+  @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   public status!: Status | string;
 
   @Column({ default: new Date() })
