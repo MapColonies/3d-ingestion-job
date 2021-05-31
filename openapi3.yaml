@@ -1,46 +1,126 @@
 openapi: 3.0.1
 info:
-  title: service-name
-  description: basic template for map colonies service
-  version: 1.0.0
+  title: 3d ingestion job
+  description: Service to create 3d ingestion job
+  version: 0.0.1
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
 paths:
-  /resourceName:
-    get:
-      operationId: getResourceName
+  /jobs:
+    post:
+      operationId: createJob
+      summary: Add a new ingestion job
       tags:
-        - resourceName
-      summary: gets the resource
+        - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPayload'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        400:
+          $ref: '#/components/responses/badRequest'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
+    get:
+      operationId: getAll
+      summary: Get all ingestion jobs
+      tags:
+        - jobs
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resource'
-    post:
-      operationId: createResource
+                $ref: '#/components/schemas/jobs'
+        204:
+          description: OK
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
+  /jobs/{jobId}:
+    get:
+      operationId: getJob
+      summary: Get a specific ingestion job by id
       tags:
-        - resourceName
-      summary: creates a new record of type resource
+        - jobs
+      parameters:
+        - $ref: '#/components/parameters/jobId'
       responses:
-        201:
-          description: created
+        200:
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resource'
+                $ref: '#/components/schemas/job'
+        404:
+          $ref: '#/components/responses/notFound'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
+    patch:
+      operationId: updateJob
+      summary: Update ingestion job status
+      tags:
+        - jobs
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updatePayload'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
         400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
+          $ref: '#/components/responses/badRequest'
+        404:
+          $ref: '#/components/responses/notFound'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
 components:
+  parameters:
+    jobId:
+      in: path
+      name: jobId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The job id
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    badRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    notFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    unexpectedError:
+      description: Unexpected Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
   schemas:
     error:
       type: object
@@ -49,17 +129,52 @@ components:
       properties:
         message:
           type: string
-    resource:
+    createPayload:
       type: object
       required:
-        - id
-        - name
-        - description
+        - modelPath
+        - metadata
       properties:
-        id:
-          type: number
-          format: int64
-        name:
+        modelPath:
           type: string
-        description:
+        metadata:
+          type: object
+    updatePayload:
+      type: object
+      required:
+        - status
+      properties:
+        status:
           type: string
+    job:
+      type: object
+      required:
+        - modelPath
+        - metadata
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        modelPath:
+          type: string
+        metadata:
+          type: object
+        status:
+          type: string
+          enum:
+            - Pending
+            - In-Progress
+            - Completed
+            - Failed
+          default: Pending
+        created:
+          type: string
+          format: date
+        updated:
+          type: string
+          format: date
+    jobs:
+      type: array
+      items:
+        $ref: '#/components/schemas/job'
