@@ -22,10 +22,10 @@ export async function getJob(app: Application, jobId: string): Promise<supertest
   return supertest.agent(app).get(`/jobs/${jobId}`).set('Content-Type', 'application/json');
 }
 
-export async function createJob(app: Application, body: { path?: unknown; metadata?: unknown }): Promise<supertest.Response> {
-  return supertest.agent(app).post('/jobs').set('Content-Type', 'application/json').send(body);
+export async function createJob(app: Application, payload: { modelPath?: unknown; metadata?: unknown }): Promise<supertest.Response> {
+  return supertest.agent(app).post('/jobs').set('Content-Type', 'application/json').send(payload);
 }
 
-export async function updateJob(app: Application, jobId: string, body: { status?: unknown }): Promise<supertest.Response> {
-  return supertest.agent(app).patch(`/jobs/${jobId}`).set('Content-Type', 'application/json').send(body);
+export async function updateJob(app: Application, jobId: string, payload: { status?: unknown }): Promise<supertest.Response> {
+  return supertest.agent(app).patch(`/jobs/${jobId}`).set('Content-Type', 'application/json').send(payload);
 }
