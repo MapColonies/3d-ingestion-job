@@ -1,12 +1,16 @@
 import { container } from 'tsyringe';
-import { Connection } from 'typeorm';
+import { Connection, EntityTarget, Repository } from 'typeorm';
 import { createFakeJob } from '../../../../helpers/helpers';
 import { IJob, Job } from '../../../../../src/job/models/job';
 
+export const getRepositoryFromContainer = <T>(target: EntityTarget<T>): Repository<T> => {
+  const connection = container.resolve(Connection);
+  return connection.getRepository<T>(target);
+};
+
 export const createDbJob = async (): Promise<IJob> => {
-  const conn = container.resolve(Connection);
-  const repo = conn.getRepository(Job);
-  const job = repo.create(createFakeJob());
-  const createdJob = await repo.save(job);
+  const repository = getRepositoryFromContainer(Job);
+  const job = repository.create(createFakeJob());
+  const createdJob = await repository.save(job);
   return createdJob;
 };
