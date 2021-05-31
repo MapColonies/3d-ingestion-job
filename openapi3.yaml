@@ -1,82 +1,106 @@
 openapi: 3.0.1
 info:
-  title: 3d-ingestion
-  description: Service to load 3d data
+  title: 3d ingestion job
+  description: Service to create 3d ingestion job
   version: 0.0.1
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
 paths:
-  /requests:
+  /jobs:
     post:
-      operationId: createRequest
-      summary: Add a new ingestion request
+      operationId: createJob
+      summary: Add a new ingestion job
       tags:
-        - requests
+        - jobs
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/payload'
+              $ref: '#/components/schemas/createPayload'
       responses:
         201:
-          description: created
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/request'
+                $ref: '#/components/schemas/job'
         400:
           $ref: '#/components/responses/badRequest'
         '5XX':
           $ref: '#/components/responses/unexpectedError'
     get:
       operationId: getAll
-      summary: Get all ingestion requests
+      summary: Get all ingestion jobs
       tags:
-        - requests
+        - jobs
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/requests'
+                $ref: '#/components/schemas/jobs'
         204:
           description: OK
         '5XX':
           $ref: '#/components/responses/unexpectedError'
-  /requests/{requestId}:
+  /jobs/{jobId}:
     get:
-      operationId: getRequest
-      summary: Get a specific ingestion request by id
+      operationId: getJob
+      summary: Get a specific ingestion job by id
       tags:
-        - requests
+        - jobs
       parameters:
-        - $ref: '#/components/parameters/requestId'
+        - $ref: '#/components/parameters/jobId'
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/request'
+                $ref: '#/components/schemas/job'
         404:
           $ref: '#/components/responses/notFound'
         '5XX':
           $ref: '#/components/responses/unexpectedError'
-
+    patch:
+      operationId: updateJob
+      summary: Update ingestion job status
+      tags:
+        - jobs
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updatePayload'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        400:
+          $ref: '#/components/responses/badRequest'
+        404:
+          $ref: '#/components/responses/notFound'
+        '5XX':
+          $ref: '#/components/responses/unexpectedError'
 components:
   parameters:
-    requestId:
+    jobId:
       in: path
-      name: requestId
+      name: jobId
       required: true
       schema:
         type: string
         format: uuid
-      description: The request id
+      description: The job id
       example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
   responses:
     badRequest:
@@ -100,34 +124,57 @@ components:
   schemas:
     error:
       type: object
+      required:
+        - message
       properties:
         message:
           type: string
-    payload:
+    createPayload:
       type: object
       required:
-        - path
+        - modelPath
         - metadata
       properties:
-        path:
+        modelPath:
           type: string
         metadata:
-          type: string
-    request:
+          type: object
+    updatePayload:
       type: object
       required:
-        - path
+        - status
+      properties:
+        status:
+          type: string
+    job:
+      type: object
+      required:
+        - modelPath
         - metadata
       properties:
-        requestId:
+        jobId:
           type: string
           format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-        path:
+        modelPath:
           type: string
         metadata:
+          type: object
+        status:
           type: string
-    requests:
+          enum:
+            - Pending
+            - In-Progress
+            - Completed
+            - Failed
+          default: Pending
+        created:
+          type: string
+          format: date
+        updated:
+          type: string
+          format: date
+    jobs:
       type: array
       items:
-        $ref: '#/components/schemas/request'
+        $ref: '#/components/schemas/job'
