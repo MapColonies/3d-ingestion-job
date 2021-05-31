@@ -1,5 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import faker from 'faker';
-import { IRequest } from '../../src/request/models/request';
+import { IJob } from '../../src/job/models/job';
+
+interface IntegrationJob extends Omit<IJob, 'created' | 'updated'> {
+  created: string;
+  updated: string;
+}
 
 export const createRandom = (): string => {
   const LEN = 36;
@@ -10,14 +16,24 @@ export const createUuid = (): string => {
   return faker.random.uuid();
 };
 
-export const createPath = (): string => {
-  return '/usr/share/nginx/downloads';
+export const createModelPath = (): string => {
+  return '/tmp/tilesets/TilesetWithDiscreteLOD';
 };
 
-export const createMetadata = (): string => {
-  return '{ "Source": "CNES/Airbus Maxar Technologies", "Camera": "1,492m", "Location": "0.1318, 73.1620" }';
+export const createMetadata = (): Record<string, never> => {
+  return {
+    id: createUuid() as never,
+    name: faker.random.word() as never,
+    version: 1 as never,
+    description: faker.random.word() as never
+  };
 };
 
-export const createFakeRequest = (): IRequest => {
-  return { requestId: createUuid(), path: createPath(), metadata: createMetadata() };
+export const createFakeJob = (): IJob => {
+  return { jobId: createUuid(), modelPath: createModelPath(), metadata: createMetadata(), status: 'Pending', created: new Date(), updated: new Date() };
+};
+
+export const convertTimestampToISOString = (job: IJob): IntegrationJob => {
+  const { created, updated, ...others } = job;
+  return { ...others, created: created.toISOString(), updated: updated.toISOString() };
 };

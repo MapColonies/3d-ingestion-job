@@ -1,3 +1,3 @@
-# 3d-ingestion-server
+# 3d-ingestion-job
 
-A restful API for saving and querying 3d ingestion requests.
+A RESTful API for querying 3d ingestion jobs
