@@ -7,7 +7,6 @@ const config: Config.InitialOptions = {
   },
   testMatch: ['<rootDir>/tests/integration/**/*.spec.ts'],
   setupFiles: ['<rootDir>/tests/configurations/jest.setup.js'],
-  globalTeardown: '<rootDir>/tests/configurations/integration/jest.teardown.js',
   reporters: [
     'default',
     [
