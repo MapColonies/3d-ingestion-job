@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import { Application } from 'express';
 import { QueryFailedError, Repository } from 'typeorm';
 import { registerTestValues } from '../../testContainerConfig';
-import { createFakeJob, createPath, createMetadata, createUuid, createRandom, convertTimestampToISOString } from '../../../helpers/helpers';
+import { createFakeJob, createModelPath, createMetadata, createUuid, createRandom, convertTimestampToISOString } from '../../../helpers/helpers';
 import * as requestSender from './helpers/requestSender';
 import { createDbJob, getRepositoryFromContainer } from './helpers/db';
 import { Job } from '../../../../src/job/models/job';
@@ -105,7 +105,7 @@ describe('JobsController', function () {
   describe('POST /jobs', function () {
     describe('Happy Path 🙂', function () {
       it('should return 201 status code and the added job', async function () {
-        const job = { path: createPath(), metadata: createMetadata() };
+        const job = { modelPath: createModelPath(), metadata: createMetadata() };
 
         const response = await requestSender.createJob(app, job);
 
@@ -115,15 +115,15 @@ describe('JobsController', function () {
     });
 
     describe('Bad Path 😡', function () {
-      it('should return 400 status code and error message if path field is missing', async function () {
+      it('should return 400 status code and error message if model path field is missing', async function () {
         const response = await requestSender.createJob(app, { metadata: createMetadata() });
 
         expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
-        expect(response.body).toHaveProperty('message', "request.body should have required property 'path'");
+        expect(response.body).toHaveProperty('message', "request.body should have required property 'modelPath'");
       });
 
       it('should return 400 status code and error message if metadata field is missing', async function () {
-        const response = await requestSender.createJob(app, { path: createPath() });
+        const response = await requestSender.createJob(app, { modelPath: createModelPath() });
 
         expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
         expect(response.body).toHaveProperty('message', "request.body should have required property 'metadata'");
@@ -145,7 +145,7 @@ describe('JobsController', function () {
       it('should return 500 status code if a db exception happens', async function () {
         const findMock = jest.fn().mockRejectedValue(new QueryFailedError('select *', [], new Error('failed')));
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock });
-        const job = { path: createPath(), metadata: createMetadata() };
+        const job = { modelPath: createModelPath(), metadata: createMetadata() };
 
         const response = await requestSender.createJob(mockedApp, job);
 
