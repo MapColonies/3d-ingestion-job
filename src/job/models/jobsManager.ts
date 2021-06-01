@@ -1,10 +1,9 @@
 import { inject, injectable } from 'tsyringe';
-import { v4 as uuid } from 'uuid';
 import { Repository } from 'typeorm';
 import { Services } from '../../common/constants';
 import { ILogger } from '../../common/interfaces';
 import { Job, IJob } from './job';
-import { EntityNotFoundError, IdAlreadyExistsError } from './errors';
+import { EntityNotFoundError } from './errors';
 
 @injectable()
 export class JobsManager {
@@ -25,15 +24,6 @@ export class JobsManager {
 
   public async createJob(newJob: IJob): Promise<IJob> {
     this.logger.log('info', `Create a new job: ${JSON.stringify(newJob)}`);
-    let dbJob: IJob | undefined;
-    let retries = 3;
-    do {
-      newJob.jobId = uuid();
-      dbJob = await this.repository.findOne({ where: [{ jobId: newJob.jobId }] });
-    } while (dbJob != undefined && --retries > 0);
-    if (dbJob != undefined) {
-      throw new IdAlreadyExistsError(`Job ${dbJob.jobId} already exists`);
-    }
     await this.repository.insert(newJob);
     return newJob;
   }
@@ -45,7 +35,8 @@ export class JobsManager {
       throw new EntityNotFoundError(`Job ${jobId} does not exist`);
     }
     dbJob.status = job.status;
-    dbJob.updated = new Date();
+    dbJob.reason = job.reason != undefined ? job.reason : '';
+    dbJob.updateTime = new Date();
     const updatedJob = await this.repository.save(dbJob);
     return updatedJob;
   }

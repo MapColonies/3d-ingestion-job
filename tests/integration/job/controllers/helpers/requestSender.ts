@@ -27,5 +27,5 @@ export async function createJob(app: Application, payload: { modelPath?: unknown
 }
 
 export async function updateJob(app: Application, jobId: string, payload: { status?: unknown }): Promise<supertest.Response> {
-  return supertest.agent(app).patch(`/jobs/${jobId}`).set('Content-Type', 'application/json').send(payload);
+  return supertest.agent(app).put(`/jobs/${jobId}`).set('Content-Type', 'application/json').send(payload);
 }
