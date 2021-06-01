@@ -66,7 +66,7 @@ paths:
           $ref: '#/components/responses/notFound'
         '5XX':
           $ref: '#/components/responses/unexpectedError'
-    patch:
+    put:
       operationId: updateJob
       summary: Update ingestion job status
       tags:
@@ -132,13 +132,33 @@ components:
     createPayload:
       type: object
       required:
-        - modelPath
-        - metadata
+        - parameters
       properties:
-        modelPath:
+        resourceId:
           type: string
-        metadata:
+          format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        version:
+          type: string
+          example: "1"
+        type:
+          type: string
+          example: 3D
+        description:
+          type: string
+        parameters:
           type: object
+        creationTime:
+          type: string
+          format: date
+        updateTime:
+          type: string
+          format: date
+        status:
+          type: string
+          example: Pending
+        reason:
+          type: string
     updatePayload:
       type: object
       required:
@@ -149,17 +169,30 @@ components:
     job:
       type: object
       required:
-        - modelPath
-        - metadata
+        - parameters
       properties:
-        jobId:
+        id:
           type: string
           format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-        modelPath:
+        resourceId:
           type: string
-        metadata:
+          format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        version:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        parameters:
           type: object
+        creationTime:
+          type: string
+          format: date
+        updateTime:
+          type: string
+          format: date
         status:
           type: string
           enum:
@@ -168,12 +201,43 @@ components:
             - Completed
             - Failed
           default: Pending
-        created:
+        reason:
           type: string
-          format: date
-        updated:
-          type: string
-          format: date
+        tasks:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              resourceId:
+                type: string
+                format: uuid
+                example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              description:
+                type: string
+              parameters:
+                type: object
+              creationTime:
+                type: string
+                format: date
+              updateTime:
+                type: string
+                format: date
+              status:
+                type: string
+                enum:
+                  - Pending
+                  - In-Progress
+                  - Completed
+                  - Failed
+                default: Pending
+              reason:
+                type: string
+              attempts:
+                type: number
     jobs:
       type: array
       items:
