@@ -4,9 +4,10 @@ import { Application } from 'express';
 import { QueryFailedError, Repository } from 'typeorm';
 import { registerTestValues } from '../../testContainerConfig';
 import { createFakeJob, createModelPath, createMetadata, createUuid, createRandom, convertTimestampToISOString } from '../../../helpers/helpers';
+import { Job } from '../../../../src/job/models/job';
+import { OperationStatus } from '../../../../src/common/constants';
 import * as requestSender from './helpers/requestSender';
 import { createDbJob, getRepositoryFromContainer } from './helpers/db';
-import { Job } from '../../../../src/job/models/job';
 
 describe('JobsController', function () {
   let app: Application;
@@ -65,7 +66,7 @@ describe('JobsController', function () {
       it('should return 200 status code and the job', async function () {
         const job = await createDbJob();
 
-        const response = await requestSender.getJob(app, job.jobId);
+        const response = await requestSender.getJob(app, job.id);
 
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
@@ -136,10 +137,10 @@ describe('JobsController', function () {
         const findMock = jest.fn().mockResolvedValue(job);
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock });
 
-        const response = await requestSender.createJob(mockedApp, job);
+        const response = await requestSender.createJob(mockedApp, job.parameters);
 
         expect(response.status).toBe(httpStatusCodes.UNPROCESSABLE_ENTITY);
-        expect(response.body).toHaveProperty('message', `Job ${job.jobId} already exists`);
+        expect(response.body).toHaveProperty('message', `Job ${job.id != undefined ? job.id : ''} already exists`);
       });
 
       it('should return 500 status code if a db exception happens', async function () {
@@ -155,16 +156,16 @@ describe('JobsController', function () {
     });
   });
 
-  describe('PATCH /jobs/{jobId}', function () {
+  describe('PUT /jobs/{jobId}', function () {
     describe('Happy Path 🙂', function () {
       it('should return 200 status code and the updated job', async function () {
         const job = createFakeJob();
         const findMock = jest.fn().mockResolvedValue(job);
-        job.status = 'Completed';
+        job.status = OperationStatus.COMPLETED;
         const saveMock = jest.fn().mockResolvedValue(job);
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock, save: saveMock });
 
-        const response = await requestSender.updateJob(mockedApp, job.jobId, job);
+        const response = await requestSender.updateJob(mockedApp, job.id, job);
 
         expect(response.status).toBe(httpStatusCodes.OK);
         expect(response.headers).toHaveProperty('content-type', 'application/json; charset=utf-8');
@@ -176,7 +177,7 @@ describe('JobsController', function () {
       it('should return 400 status code and error message if status field is missing', async function () {
         const job = createFakeJob();
         delete job.status;
-        const response = await requestSender.updateJob(app, job.jobId, job);
+        const response = await requestSender.updateJob(app, job.id, job);
 
         expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
         expect(response.body).toHaveProperty('message', "request.body should have required property 'status'");
@@ -189,20 +190,20 @@ describe('JobsController', function () {
         const findMock = jest.fn().mockResolvedValue(undefined);
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock });
 
-        const response = await requestSender.updateJob(mockedApp, job.jobId, job);
+        const response = await requestSender.updateJob(mockedApp, job.id, job);
 
         expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
-        expect(response.body).toHaveProperty('message', `Job ${job.jobId} does not exist`);
+        expect(response.body).toHaveProperty('message', `Job ${job.id != undefined ? job.id : ''} does not exist`);
       });
 
       it('should return 500 status code if a db exception happens', async function () {
         const job = createFakeJob();
         const findMock = jest.fn().mockResolvedValue(job);
-        job.status = 'Completed';
+        job.status = OperationStatus.COMPLETED;
         const saveMock = jest.fn().mockRejectedValue(new QueryFailedError('select *', [], new Error('failed')));
         const mockedApp = requestSender.getMockedRepoApp({ findOne: findMock, save: saveMock });
 
-        const response = await requestSender.updateJob(mockedApp, job.jobId, job);
+        const response = await requestSender.updateJob(mockedApp, job.id, job);
 
         expect(response.status).toBe(httpStatusCodes.INTERNAL_SERVER_ERROR);
         expect(response.body).toHaveProperty('message', 'failed');
