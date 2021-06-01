@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import faker from 'faker';
+import { OperationStatus } from '../../src/common/constants';
 import { IJob } from '../../src/job/models/job';
 
-interface IntegrationJob extends Omit<IJob, 'created' | 'updated'> {
-  created: string;
-  updated: string;
+interface IntegrationJob extends Omit<IJob, 'creationTime' | 'updateTime'> {
+  creationTime: string;
+  updateTime: string;
 }
 
 export const createRandom = (): string => {
@@ -30,10 +31,11 @@ export const createMetadata = (): Record<string, never> => {
 };
 
 export const createFakeJob = (): IJob => {
-  return { jobId: createUuid(), modelPath: createModelPath(), metadata: createMetadata(), status: 'Pending', created: new Date(), updated: new Date() };
+  const parameters = { /*modelPath: createModelPath(), metadata: createMetadata()*/ };
+  return { id: createUuid(), resourceId: createUuid(), version: '1', type: '3D', parameters, status: OperationStatus.PENDING, creationTime: new Date(), updateTime: new Date() };
 };
 
 export const convertTimestampToISOString = (job: IJob): IntegrationJob => {
-  const { created, updated, ...others } = job;
-  return { ...others, created: created.toISOString(), updated: updated.toISOString() };
+  const { creationTime, updateTime, ...others } = job;
+  return { ...others, creationTime: creationTime.toISOString(), updateTime: updateTime.toISOString() };
 };
