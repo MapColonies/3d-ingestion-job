@@ -59,7 +59,7 @@ export class JobsController {
     }
   };
 
-  public patch: UpdateRequestHandler = async (req, res, next) => {
+  public put: UpdateRequestHandler = async (req, res, next) => {
     try {
       const { jobId } = req.params;
       const job = await this.manager.updateJob(jobId, req.body);
