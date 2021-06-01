@@ -9,7 +9,7 @@ const jobsRouterFactory: FactoryFunction<Router> = (dependencyContainer) => {
   router.get('/', controller.getAll);
   router.get('/:jobId', controller.get);
   router.post('/', controller.post);
-  router.patch('/:jobId', controller.patch);
+  router.put('/:jobId', controller.put);
 
   return router;
 };

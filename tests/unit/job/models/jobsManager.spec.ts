@@ -3,7 +3,7 @@ import { Job } from '../../../../src/job/models/job';
 import { JobsManager } from '../../../../src/job/models/jobsManager';
 import { EntityNotFoundError, IdAlreadyExistsError } from '../../../../src/job/models/errors';
 import { createFakeJob, createUuid } from '../../../helpers/helpers';
-import { Status } from '../../../../src/common/constants';
+import { OperationStatus } from '../../../../src/common/constants';
 
 let jobsManager: JobsManager;
 
@@ -135,10 +135,10 @@ describe('JobsManager', () => {
     it('returns the job', async () => {
       const job = createFakeJob();
       findOne.mockResolvedValue(job);
-      job.status = Status.COMPLETED;
+      job.status = OperationStatus.COMPLETED;
       save.mockResolvedValue(job);
 
-      const updatePromise = jobsManager.updateJob(job.jobId, job);
+      const updatePromise = jobsManager.updateJob(job.id, job);
 
       await expect(updatePromise).resolves.toStrictEqual(job);
     });
@@ -147,7 +147,7 @@ describe('JobsManager', () => {
       save.mockRejectedValue(new QueryFailedError('select *', [], new Error()));
       const job = createFakeJob();
 
-      const updatePromise = jobsManager.updateJob(job.jobId, job);
+      const updatePromise = jobsManager.updateJob(job.id, job);
 
       await expect(updatePromise).rejects.toThrow(QueryFailedError);
     });
@@ -156,7 +156,7 @@ describe('JobsManager', () => {
       findOne.mockReturnValue(undefined);
       const job = createFakeJob();
 
-      const updatePromise = jobsManager.updateJob(job.jobId, job);
+      const updatePromise = jobsManager.updateJob(job.id, job);
 
       await expect(updatePromise).rejects.toThrow(EntityNotFoundError);
     });
