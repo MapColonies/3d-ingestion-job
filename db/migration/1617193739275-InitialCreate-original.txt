@@ -4,6 +4,7 @@ export class InitialCreate1617193739275 implements MigrationInterface {
     public name = 'InitialCreate1617193739275'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
         await queryRunner.query(`CREATE TYPE "jobs_status_enum" AS ENUM('Pending', 'In-Progress', 'Completed', 'Failed')`);
         await queryRunner.query(
             `CREATE TABLE "jobs" (
