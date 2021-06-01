@@ -6,9 +6,9 @@ export enum Services {
   REPOSITORY = 'JobsRepository',
 }
 
-export enum Status {
+export enum OperationStatus {
   PENDING = 'Pending',
-  PROGRESS = 'In-Progress',
+  IN_PROGRESS = 'In-Progress',
   COMPLETED = 'Completed',
   FAILED = 'Failed',
 }
