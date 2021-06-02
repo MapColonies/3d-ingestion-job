@@ -2,99 +2,123 @@
 
 export interface Metadata {
   /**
-   * Product's unique identifier
+   * Unique identifier
    */
-  productId: string;
+  identifier: string;
   /**
-   * Product name
+   * Typename for the metadata; typically the value of the root element tag (e.g. csw:Record, gmd:MD_Metadata)
    */
-  productName: string;
+  typename: string;
   /**
-   * Emergence geographic area name
+   * Schema for the metadata; typically the target namespace (e.g. http://www.opengis.net/cat/csw/2.0.2, http://www.isotc211.org/2005/gmd)
    */
-  geographicArea: string;
+  schema: string;
   /**
-   * Product version
+   * MD source
    */
-  productVersion: number; // 1
+  mdSource: string;
   /**
-   * Product type
+   * Full XML representation
    */
-  productType: string; // 3DModel
+  xml: string;
   /**
-   * Product description
+   * Bag of XML element text values, used for full text search
+   */
+  anytext: string;
+  /**
+   * Date of insertion
+   */
+  insertDate: Date;
+  /**
+   * Creation date
+   */
+  creationDate?: Date;
+  /**
+   * Validation date
+   */
+  validationDate?: Date;
+  /**
+   * Well-Known-Text markup language for representing vector geometry objects
+   */
+  wktGeometry?: string;
+  /**
+   * Title
+   */
+  title?: string;
+  /**
+   * The organization that produced/supplied the product
+   */
+  producerName?: string; // IDFMU
+  /**
+   * Description
    */
   description?: string;
+  /**
+   * Type
+   */
+  type?: string;
   /**
    * Product classification
    */
   classification?: string;
   /**
-   * Geographical delineation of the product
+   * The product reference system, including a vertical data
+   */
+  srs?: string;
+  /**
+   * Project name
+   */
+  projectName?: string;
+  /**
+   * Version
+   */
+  version?: string;
+  /**
+   * Centroid
+   */
+  centroid?: string;
+  /**
+   * Footprint
    */
   footprint?: string;
   /**
-   * Bottom left point of a blocking rectangle
+   * Begining time
    */
-  extentLowerLeft: string;
+  timeBegin?: Date;
   /**
-   * Top right point of a blocking rectangle
+   * Ending time
    */
-  extentUpperRight: string;
+  timeEnd?: Date;
   /**
-   * Date of oldest source material
+   * The sensor used as the source of the product
    */
-  SourceDateStart: Date;
+  sensorType?: string;
   /**
-   * Date of latest source material
+   * Region
    */
-  SourceDateEnd: Date;
+  region?: string;
   /**
-   * The organization that produced/supplied the product
-   */
-  producerName: string; // IDFMU
-  /**
-   * The product reference system, including a vertical data
-   */
-  SRS: string;
-  /**
-   * Axis system center in which the coordinate is displayed
-   */
-  SRSOrigin?: string;
-  /**
-   * Number of points per unit of area
+   * Nominal resolution
    */
   nominalResolution?: string;
   /**
    * LE90 of the height values
    */
-  accuracyLE90: string;
+  accuracyLE90?: string;
   /**
    * CE90 of location of elevation points
    */
-  horizontalAccuracyCE90: string;
+  horizontalAccuracyCE90?: string;
   /**
    * LE90 of distance measurement
    */
-  relativeAccuracyLE90: string;
+  relativeAccuracyLE90?: string;
   /**
-   * The minimum height
+   * Estimated precision
    */
-  heightRangeFrom?: number;
+  estimatedPrecision?: string;
   /**
-   * The maximum height
+   * Measured precision
    */
-  heightRangeTo?: number;
-  /**
-   * The sensor used as the source of the product (possibly more than one)
-   */
-  sensor: string[];
-  /**
-   * Method of extracting altitude data
-   */
-  productionMethod?: string; // Photogrammetric
-  /**
-   * Production system
-   */
-  productionSystem: string;
+  measuredPrecision?: string;
 }

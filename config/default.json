@@ -13,10 +13,10 @@
   },
   "db": {
     "type": "postgres",
-    "host": "localhost",
+    "host": "10.8.1.15",
     "port": 5432,
     "username": "postgres",
     "password": "postgres",
-    "database": "discreteStatus"
+    "database": "discrete-ingestion-dev"
   }
 }

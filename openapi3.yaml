@@ -140,7 +140,7 @@ components:
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
         version:
           type: string
-          example: "1"
+          example: "1.0"
         type:
           type: string
           example: 3D
