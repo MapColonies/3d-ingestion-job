@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { getErrorHandlerMiddleware } from '@map-colonies/error-express-handler';
 import { middleware as OpenApiMiddleware } from 'express-openapi-validator';
 import { container, inject, injectable } from 'tsyringe';
@@ -42,6 +43,8 @@ export class ServerBuilder {
     this.serverInstance.use(OpenApiMiddleware({ apiSpec: apiSpecPath, validateRequests: true, ignorePaths: ignorePathRegex }));
 
     this.serverInstance.use(this.requestLogger.getLoggerMiddleware());
+
+    this.serverInstance.use(cors());
   }
 
   private registerPostRoutesMiddleware(): void {

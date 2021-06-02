@@ -16,6 +16,7 @@ type GetAllRequestHandler = RequestHandler<undefined, IJob[]>;
 type GetRequestHandler = RequestHandler<JobParams, IJob>;
 type CreateRequestHandler = RequestHandler<undefined, IJob, IJob>;
 type UpdateRequestHandler = RequestHandler<JobParams, IJob, IJob>;
+type OptionsHandler = RequestHandler<undefined, undefined, undefined>;
 
 @injectable()
 export class JobsController {
@@ -68,6 +69,14 @@ export class JobsController {
       if (error instanceof EntityNotFoundError) {
         (error as HttpError).status = httpStatus.NOT_FOUND;
       }
+      return next(error);
+    }
+  };
+
+  public options: OptionsHandler = (req, res, next) => {
+    try {
+      return res.sendStatus(httpStatus.NO_CONTENT);
+    } catch (error) {
       return next(error);
     }
   };
